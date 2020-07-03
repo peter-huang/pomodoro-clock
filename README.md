@@ -1,12 +1,12 @@
-# Random Quote Machine
+# Pomodoro Clock
 
-A React application that [to be filled] freecodecamp frontend development curriculum. I can use any mix of HTML, JavaScript, CSS, Bootstrap, SASS, React, Redux, and jQuery to complete this project.
+A React time management application built for the freecodecamp frontend development curriculum. I can use any mix of HTML, JavaScript, CSS, Bootstrap, SASS, React, Redux, and jQuery to complete this project.
 
 **Final Project:** [https://peterhuang.net/projects/pomodoro-clock/](https://peterhuang.net/projects/pomodoro-clock/)
 
-**User Story #1:** [to be filled]
+**User Story #1:** Able to schedule work sessoin and break lengths in minute increments.
 
-**User Story #2:** [to be filled]
+**User Story #2:** Able to play, pause, and reset the timer.
 
 ## Getting Started
 
