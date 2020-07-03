@@ -100,9 +100,15 @@ a:hover, a:visited {
   font-weight: bold;
 }
 
+#pomodoro-clock #time-left {
+  color: black;
+  min-width: 200px;
+}
+
 #pomodoro-clock #play-reset-controls #start_stop,
 #pomodoro-clock #play-reset-controls #reset {
   border: none;
+  margin: 0em 0.5em;
   background: none;
 }
 

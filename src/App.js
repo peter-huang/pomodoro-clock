@@ -28,18 +28,47 @@ class App extends React.Component {
     this.reset = this.reset.bind(this);
     this.formatTime = this.formatTime.bind(this);
     this.start_stop = this.start_stop.bind(this);
+    this.startTimer = this.startTimer.bind(this);
   }
+
+  /*
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("shouldComponentUpdate");
+
+    return true;
+  }*/
 
   start_stop() {
     let remainTime = this.state.session_length * 60;
 
     let formattedTime = this.formatTime(remainTime);
 
+    this.startTimer();
+    /*
     this.setState((state) => {
       return {
         start_stopState: !state.start_stopState,
       };
-    });
+    });*/
+  }
+
+  startTimer() {
+    let remainTime = this.state.session_length * 60;
+
+    let countDownHandler = setInterval(() => {
+      if (remainTime - 1 >= 0) {
+        console.log(remainTime);
+        this.setState((state) => {
+          return {
+            time_left:
+              state.session_length * 60 > 0
+                ? this.formatTime(remainTime--)
+                : clearInterval(countDownHandler),
+          };
+        });
+      }
+      //console.log(remainTime - 1 >= 0 ? remainTime-- : clearInterval(t));
+    }, 1000);
   }
 
   /*
@@ -48,11 +77,22 @@ class App extends React.Component {
    * @param time - the amount of time in seconds
    */
   formatTime(time) {
-    console.log(time);
     let min = Math.floor(time / 60);
     let seconds = time - min * 60;
 
-    return min + ":" + seconds;
+    if (min < 10) {
+      if (seconds < 10) {
+        return "0" + min + ":" + "0" + seconds;
+      } else {
+        return "0" + min + ":" + seconds;
+      }
+    } else {
+      if (seconds < 10) {
+        return min + ":" + "0" + seconds;
+      } else {
+        return min + ":" + seconds;
+      }
+    }
   }
 
   increaseBreak() {
@@ -104,6 +144,8 @@ class App extends React.Component {
    *
    */
   reset() {
+    document.getElementById("beep").pause();
+    document.getElementById("beep").currenTime = 0;
     this.setState((state) => CLOCK_STATES.DEFAULT);
   }
 
@@ -198,7 +240,7 @@ class App extends React.Component {
 
                     <audio
                       id="beep"
-                      src="https://wwww.peterhuang.net/projects/pomodoro-clock/static/media/alarm-ringtome-short.mp3"
+                      src="http://www.peterhuang.net/projects/pomodoro-clock/static/media/alarm-ringtone-short.mp3"
                     ></audio>
                   </div>
 

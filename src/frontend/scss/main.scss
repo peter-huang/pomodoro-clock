@@ -98,10 +98,16 @@ a {
     }
   }
 
+  #time-left {
+    color: black;
+    min-width: 200px;
+  }
+
   #play-reset-controls {
     #start_stop,
     #reset {
       border: none;
+      margin: 0em 0.5em;
       background: none;
       &:focus,
       &:hover {
