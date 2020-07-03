@@ -55,6 +55,58 @@ a {
 
   .controls-title {
   }
+  #session-decrement,
+  #session-increment,
+  #break-decrement,
+  #break-increment {
+    border-radius: 1em;
+    border: 2px black solid;
+    i {
+      padding: 0em 0.25em;
+    }
+    &:focus,
+    &:hover {
+      background-color: #457b9d;
+      outline: none;
+      i {
+        color: white;
+      }
+    }
+  }
+
+  #break-length,
+  #session-length {
+    margin: 0em 0.25em;
+    color: black;
+    font-weight: bold;
+  }
+
+  #timer-container {
+    border: 5px black solid;
+    background-color: white;
+    padding: 1em 5em;
+    border-radius: 1em;
+    #timer-label {
+      color: black;
+      font-weight: bold;
+    }
+  }
+
+  #play-reset-controls {
+    #start_stop,
+    #reset {
+      border: none;
+      background: none;
+      &:focus,
+      &:hover {
+        outline: none;
+      }
+
+      &:hover {
+        color: darken(#457b9d, 20%);
+      }
+    }
+  }
 
   #break-container {
     * {

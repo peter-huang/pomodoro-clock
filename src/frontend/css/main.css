@@ -39,6 +39,78 @@ a:hover, a:visited {
   font-weight: bold;
 }
 
+#pomodoro-clock #session-decrement,
+#pomodoro-clock #session-increment,
+#pomodoro-clock #break-decrement,
+#pomodoro-clock #break-increment {
+  border-radius: 1em;
+  border: 2px black solid;
+}
+
+#pomodoro-clock #session-decrement i,
+#pomodoro-clock #session-increment i,
+#pomodoro-clock #break-decrement i,
+#pomodoro-clock #break-increment i {
+  padding: 0em 0.25em;
+}
+
+#pomodoro-clock #session-decrement:focus, #pomodoro-clock #session-decrement:hover,
+#pomodoro-clock #session-increment:focus,
+#pomodoro-clock #session-increment:hover,
+#pomodoro-clock #break-decrement:focus,
+#pomodoro-clock #break-decrement:hover,
+#pomodoro-clock #break-increment:focus,
+#pomodoro-clock #break-increment:hover {
+  background-color: #457b9d;
+  outline: none;
+}
+
+#pomodoro-clock #session-decrement:focus i, #pomodoro-clock #session-decrement:hover i,
+#pomodoro-clock #session-increment:focus i,
+#pomodoro-clock #session-increment:hover i,
+#pomodoro-clock #break-decrement:focus i,
+#pomodoro-clock #break-decrement:hover i,
+#pomodoro-clock #break-increment:focus i,
+#pomodoro-clock #break-increment:hover i {
+  color: white;
+}
+
+#pomodoro-clock #break-length,
+#pomodoro-clock #session-length {
+  margin: 0em 0.25em;
+  color: black;
+  font-weight: bold;
+}
+
+#pomodoro-clock #timer-container {
+  border: 5px black solid;
+  background-color: white;
+  padding: 1em 5em;
+  border-radius: 1em;
+}
+
+#pomodoro-clock #timer-container #timer-label {
+  color: black;
+  font-weight: bold;
+}
+
+#pomodoro-clock #play-reset-controls #start_stop,
+#pomodoro-clock #play-reset-controls #reset {
+  border: none;
+  background: none;
+}
+
+#pomodoro-clock #play-reset-controls #start_stop:focus, #pomodoro-clock #play-reset-controls #start_stop:hover,
+#pomodoro-clock #play-reset-controls #reset:focus,
+#pomodoro-clock #play-reset-controls #reset:hover {
+  outline: none;
+}
+
+#pomodoro-clock #play-reset-controls #start_stop:hover,
+#pomodoro-clock #play-reset-controls #reset:hover {
+  color: #264356;
+}
+
 #pomodoro-clock #break-container * {
   padding: 0em 0.25em;
 }
