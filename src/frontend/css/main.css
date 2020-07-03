@@ -44,7 +44,7 @@ a:hover, a:visited {
 #pomodoro-clock #break-decrement,
 #pomodoro-clock #break-increment {
   border-radius: 1em;
-  border: 2px black solid;
+  border: 4px #001233 solid;
 }
 
 #pomodoro-clock #session-decrement i,
@@ -73,6 +73,12 @@ a:hover, a:visited {
 #pomodoro-clock #break-increment:focus i,
 #pomodoro-clock #break-increment:hover i {
   color: white;
+}
+
+#pomodoro-clock #break-label,
+#pomodoro-clock #session-label {
+  color: #001233;
+  font-weight: bold;
 }
 
 #pomodoro-clock #break-length,
