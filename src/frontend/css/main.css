@@ -29,7 +29,7 @@ a:hover, a:visited {
 #pomodoro-clock {
   border: 5px black solid;
   background-color: #83c5be;
-  max-width: 700px;
+  max-width: 600px;
   padding: 1em;
   border-radius: 1em;
 }
@@ -54,23 +54,24 @@ a:hover, a:visited {
   padding: 0em 0.25em;
 }
 
-#pomodoro-clock #session-decrement:focus, #pomodoro-clock #session-decrement:hover,
+#pomodoro-clock #session-decrement:focus,
 #pomodoro-clock #session-increment:focus,
-#pomodoro-clock #session-increment:hover,
 #pomodoro-clock #break-decrement:focus,
+#pomodoro-clock #break-increment:focus {
+  outline: none;
+}
+
+#pomodoro-clock #session-decrement:hover,
+#pomodoro-clock #session-increment:hover,
 #pomodoro-clock #break-decrement:hover,
-#pomodoro-clock #break-increment:focus,
 #pomodoro-clock #break-increment:hover {
   background-color: #457b9d;
   outline: none;
 }
 
-#pomodoro-clock #session-decrement:focus i, #pomodoro-clock #session-decrement:hover i,
-#pomodoro-clock #session-increment:focus i,
+#pomodoro-clock #session-decrement:hover i,
 #pomodoro-clock #session-increment:hover i,
-#pomodoro-clock #break-decrement:focus i,
 #pomodoro-clock #break-decrement:hover i,
-#pomodoro-clock #break-increment:focus i,
 #pomodoro-clock #break-increment:hover i {
   color: white;
 }
@@ -86,6 +87,7 @@ a:hover, a:visited {
   margin: 0em 0.25em;
   color: black;
   font-weight: bold;
+  min-width: 2.5em;
 }
 
 #pomodoro-clock #timer-container {

@@ -4,9 +4,10 @@ import logo from "./logo.svg";
 const CLOCK_STATES = {
   DEFAULT: {
     session_length: 25,
+    session_in_secs: 1500,
     break_length: 5,
     time_left: "25:00",
-    start_stopState: false,
+    start_stopState: true,
   },
 };
 
@@ -29,46 +30,67 @@ class App extends React.Component {
     this.formatTime = this.formatTime.bind(this);
     this.start_stop = this.start_stop.bind(this);
     this.startTimer = this.startTimer.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+  }
+
+  componentDidMount() {
+    this.countDownHandler = null;
+  }
+
+  componentWillUnmount() {
+    if (this.countDownHandler != null) {
+      clearInterval(this.countDownHandler);
+    }
+  }
+
+  start_stop() {
+    console.log(this.state.start_stopState);
+
+    if (this.state.start_stopState) {
+      this.startTimer();
+      this.setState((state) => {
+        return {
+          start_stopState: !state.start_stopState,
+        };
+      });
+    } else {
+      this.stopTimer();
+      this.setState((state) => {
+        return {
+          start_stopState: !state.start_stopState,
+        };
+      });
+    }
   }
 
   /*
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log("shouldComponentUpdate");
-
-    return true;
-  }*/
-
-  start_stop() {
-    let remainTime = this.state.session_length * 60;
-
-    let formattedTime = this.formatTime(remainTime);
-
-    this.startTimer();
-    /*
-    this.setState((state) => {
-      return {
-        start_stopState: !state.start_stopState,
-      };
-    });*/
-  }
-
+   * Starts the timer and safe-guards if the asynchronous timer process stops at 0
+   *
+   *
+   */
   startTimer() {
-    let remainTime = this.state.session_length * 60;
-
-    let countDownHandler = setInterval(() => {
-      if (remainTime - 1 >= 0) {
-        console.log(remainTime);
+    this.countDownHandler = setInterval(() => {
+      if (this.state.session_in_secs < 0) {
+        let audio = document.getElementById("beep");
+        audio.play();
+        clearInterval(this.countDownHandler);
+      } else {
         this.setState((state) => {
           return {
-            time_left:
-              state.session_length * 60 > 0
-                ? this.formatTime(remainTime--)
-                : clearInterval(countDownHandler),
+            time_left: this.formatTime(this.state.session_in_secs),
+            session_in_secs: state.session_in_secs - 1,
           };
         });
       }
-      //console.log(remainTime - 1 >= 0 ? remainTime-- : clearInterval(t));
     }, 1000);
+  }
+
+  stopTimer() {
+    if (this.countDownHandler != null) {
+      clearInterval(this.countDownHandler);
+    }
+
+    console.log("end timer");
   }
 
   /*
@@ -79,6 +101,11 @@ class App extends React.Component {
   formatTime(time) {
     let min = Math.floor(time / 60);
     let seconds = time - min * 60;
+
+    console.log(time + " " + min + " " + seconds);
+    if (min === 0 && seconds === 0) {
+      return "00:00";
+    }
 
     if (min < 10) {
       if (seconds < 10) {
@@ -95,6 +122,10 @@ class App extends React.Component {
     }
   }
 
+  /*
+   * Increasese the break
+   *
+   */
   increaseBreak() {
     this.setState((state) => {
       return {
@@ -106,6 +137,10 @@ class App extends React.Component {
     });
   }
 
+  /*
+   * Decreases the break
+   *
+   */
   decreaseBreak() {
     this.setState((state) => {
       return {
@@ -117,6 +152,10 @@ class App extends React.Component {
     });
   }
 
+  /*
+   * Increasese the session
+   *
+   */
   increaseLength() {
     this.setState((state) => {
       return {
@@ -124,17 +163,42 @@ class App extends React.Component {
           state.session_length + 1 <= 60
             ? state.session_length + 1
             : state.session_length,
+
+        session_in_secs:
+          state.session_in_secs + 60 <= 3600
+            ? state.session_in_secs + 60
+            : state.session_in_secs,
+
+        time_left:
+          state.session_in_secs + 60 <= 3600
+            ? this.formatTime(state.session_in_secs + 60)
+            : this.formatTime(state.session_in_secs),
       };
     });
   }
 
+  /*
+   * Decreases the session
+   *
+   */
   decreaseLength() {
+    console.log(this.state.session_in_secs);
     this.setState((state) => {
       return {
         session_length:
           state.session_length - 1 >= 1
             ? state.session_length - 1
             : state.session_length,
+
+        session_in_secs:
+          state.session_in_secs - 60 >= 60
+            ? state.session_in_secs - 60
+            : state.session_in_secs,
+
+        time_left:
+          state.session_in_secs - 60 >= 60
+            ? this.formatTime(state.session_in_secs - 60)
+            : this.formatTime(state.session_in_secs),
       };
     });
   }
@@ -163,12 +227,12 @@ class App extends React.Component {
                 </div>
 
                 {/* Controls*/}
-                <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 pt-4">
+                <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 pt-4">
                   <div class="row">
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                      <h3 id="break-label" class="controls-title text-center">
+                      <h4 id="break-label" class="controls-title text-center">
                         Break Length
-                      </h3>
+                      </h4>
                     </div>
 
                     <div
@@ -192,12 +256,12 @@ class App extends React.Component {
                   </div>
                 </div>
 
-                <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 pt-4">
+                <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 pt-4">
                   <div class="row">
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                      <h3 id="session-label" class="controls-title text-center">
+                      <h4 id="session-label" class="controls-title text-center">
                         Session Length
-                      </h3>
+                      </h4>
                     </div>
 
                     <div
@@ -256,7 +320,7 @@ class App extends React.Component {
                 </div>
               </div>
             </div>
-            <div class="text-center font-weight-bold text-black mt-2">
+            <div class="text-center text-black mt-2">
               Designed and coded by{" "}
               <a class="credits" href="https://github.com/peter-huang">
                 Peter Huang
