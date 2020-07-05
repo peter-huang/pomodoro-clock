@@ -3,14 +3,28 @@ import logo from "./logo.svg";
 
 const CLOCK_STATES = {
   DEFAULT: {
+    session_length: 0.15,
+    session_in_secs: 7,
+    break_length: 0.15,
+    break_in_secs: 7,
+    time_left: "25:00",
+    isStartTimer: false,
+    isStartBreak: false,
+  },
+};
+/*
+const CLOCK_STATES = {
+  DEFAULT: {
     session_length: 25,
     session_in_secs: 1500,
     break_length: 5,
+    break_in_secs: 300,
     time_left: "25:00",
-    start_stopState: true,
+    isStartTimer: false,
+    isStartBreak: false,
   },
 };
-
+*/
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -35,29 +49,41 @@ class App extends React.Component {
 
   componentDidMount() {
     this.countDownHandler = null;
+    this.breakHandler = null;
+    this.audio = document.getElementById("beep");
   }
 
   componentWillUnmount() {
     if (this.countDownHandler != null) {
       clearInterval(this.countDownHandler);
     }
+
+    if (this.countDownHandler != null) {
+      clearInterval(this.breakHandler);
+    }
+  }
+
+  shouldComponentUpdate(nextProp, nextState) {
+    if (this.state.session_in_secs === nextState.session_in_secs) {
+      console.log("update " + this.state.session_in_secs);
+    }
+
+    return true;
   }
 
   start_stop() {
-    console.log(this.state.start_stopState);
-
-    if (this.state.start_stopState) {
+    if (!this.state.isStartTimer) {
       this.startTimer();
       this.setState((state) => {
         return {
-          start_stopState: !state.start_stopState,
+          isStartTimer: !state.isStartTimer,
         };
       });
     } else {
       this.stopTimer();
       this.setState((state) => {
         return {
-          start_stopState: !state.start_stopState,
+          isStartTimer: !state.isStartTimer,
         };
       });
     }
@@ -66,21 +92,60 @@ class App extends React.Component {
   /*
    * Starts the timer and safe-guards if the asynchronous timer process stops at 0
    *
-   *
    */
   startTimer() {
     this.countDownHandler = setInterval(() => {
-      if (this.state.session_in_secs < 0) {
-        let audio = document.getElementById("beep");
-        audio.play();
-        clearInterval(this.countDownHandler);
-      } else {
-        this.setState((state) => {
-          return {
-            time_left: this.formatTime(this.state.session_in_secs),
-            session_in_secs: state.session_in_secs - 1,
-          };
-        });
+      this.audio = document.getElementById("beep");
+
+      // Countdown session
+      if (!this.state.isStartBreak) {
+        if (this.state.session_in_secs <= 0) {
+          this.audio.currentTime = 0;
+          this.audio.play();
+
+          // Reset session and start break
+
+          this.setState((state) => {
+            return {
+              isStartBreak: !state.isStartBreak,
+              time_left: this.formatTime(this.state.session_in_secs),
+              session_in_secs: state.session_length * 60,
+            };
+          });
+        } else {
+          this.setState((state) => {
+            return {
+              time_left: this.formatTime(this.state.session_in_secs - 1),
+              session_in_secs: state.session_in_secs - 1,
+            };
+          });
+        }
+      }
+
+      // Countdown break
+      else {
+        console.log("break start");
+        console.log(this.state.break_in_secs);
+
+        if (this.state.break_in_secs <= 0) {
+          this.audio.currentTime = 0;
+          this.audio.play();
+          // Reset break and start session
+          this.setState((state) => {
+            return {
+              isStartBreak: !state.isStartBreak,
+              time_left: this.formatTime(this.state.break_in_secs),
+              break_in_secs: state.break_length * 60,
+            };
+          });
+        } else {
+          this.setState((state) => {
+            return {
+              time_left: this.formatTime(this.state.break_in_secs - 1),
+              break_in_secs: state.break_in_secs - 1,
+            };
+          });
+        }
       }
     }, 1000);
   }
@@ -127,14 +192,21 @@ class App extends React.Component {
    *
    */
   increaseBreak() {
-    this.setState((state) => {
-      return {
-        break_length:
-          state.break_length + 1 <= 60
-            ? state.break_length + 1
-            : state.break_length,
-      };
-    });
+    if (!this.state.isStartTimer) {
+      this.setState((state) => {
+        return {
+          break_length:
+            state.break_length + 1 <= 60
+              ? state.break_length + 1
+              : state.break_length,
+
+          break_in_secs:
+            (state.break_length + 1) * 60 <= 3600
+              ? (state.break_length + 1) * 60
+              : state.break_length * 60,
+        };
+      });
+    }
   }
 
   /*
@@ -142,14 +214,21 @@ class App extends React.Component {
    *
    */
   decreaseBreak() {
-    this.setState((state) => {
-      return {
-        break_length:
-          state.break_length - 1 >= 1
-            ? state.break_length - 1
-            : state.break_length,
-      };
-    });
+    if (!this.state.isStartTimer) {
+      this.setState((state) => {
+        return {
+          break_length:
+            state.break_length - 1 >= 1
+              ? state.break_length - 1
+              : state.break_length,
+
+          break_in_secs:
+            (state.break_length - 1) * 60 >= 60
+              ? (state.break_length - 1) * 60
+              : state.break_length * 60,
+        };
+      });
+    }
   }
 
   /*
@@ -157,24 +236,26 @@ class App extends React.Component {
    *
    */
   increaseLength() {
-    this.setState((state) => {
-      return {
-        session_length:
-          state.session_length + 1 <= 60
-            ? state.session_length + 1
-            : state.session_length,
+    if (!this.state.isStartTimer) {
+      this.setState((state) => {
+        return {
+          session_length:
+            state.session_length + 1 <= 60
+              ? state.session_length + 1
+              : state.session_length,
 
-        session_in_secs:
-          state.session_in_secs + 60 <= 3600
-            ? state.session_in_secs + 60
-            : state.session_in_secs,
+          session_in_secs:
+            (state.session_length + 1) * 60 <= 3600
+              ? (state.session_length + 1) * 60
+              : state.session_length * 60,
 
-        time_left:
-          state.session_in_secs + 60 <= 3600
-            ? this.formatTime(state.session_in_secs + 60)
-            : this.formatTime(state.session_in_secs),
-      };
-    });
+          time_left:
+            (state.session_length + 1) * 60 <= 3600
+              ? this.formatTime((state.session_length + 1) * 60)
+              : this.formatTime(state.session_length * 60),
+        };
+      });
+    }
   }
 
   /*
@@ -182,25 +263,26 @@ class App extends React.Component {
    *
    */
   decreaseLength() {
-    console.log(this.state.session_in_secs);
-    this.setState((state) => {
-      return {
-        session_length:
-          state.session_length - 1 >= 1
-            ? state.session_length - 1
-            : state.session_length,
+    if (!this.state.isStartTimer) {
+      this.setState((state) => {
+        return {
+          session_length:
+            state.session_length - 1 >= 1
+              ? state.session_length - 1
+              : state.session_length,
 
-        session_in_secs:
-          state.session_in_secs - 60 >= 60
-            ? state.session_in_secs - 60
-            : state.session_in_secs,
+          session_in_secs:
+            state.session_length * 60 - 60 >= 60
+              ? state.session_length * 60 - 60
+              : state.session_length * 60,
 
-        time_left:
-          state.session_in_secs - 60 >= 60
-            ? this.formatTime(state.session_in_secs - 60)
-            : this.formatTime(state.session_in_secs),
-      };
-    });
+          time_left:
+            state.session_length * 60 - 60 >= 60
+              ? this.formatTime(state.session_length * 60 - 60)
+              : this.formatTime(state.session_length * 60),
+        };
+      });
+    }
   }
 
   /*
@@ -208,8 +290,9 @@ class App extends React.Component {
    *
    */
   reset() {
-    document.getElementById("beep").pause();
-    document.getElementById("beep").currenTime = 0;
+    this.audio.pause();
+    this.audio.currentTime = 0;
+    this.stopTimer();
     this.setState((state) => CLOCK_STATES.DEFAULT);
   }
 
@@ -295,7 +378,7 @@ class App extends React.Component {
                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 pt-4 d-flex flex-column justify-content-center align-items-center">
                   <div id="timer-container">
                     <h3 id="timer-label" class="text-center">
-                      Session
+                      {!this.state.isStartBreak ? "SESSION" : "BREAK"}
                     </h3>
 
                     <h1 id="time-left" class="text-center">
