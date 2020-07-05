@@ -14,6 +14,30 @@
   #{$property}: #{$value};
 }
 
+// Mixin to prefix animation
+//// @param {String} $animation-name - Name of the animation
+@mixin keyframes($animation-name) {
+  @-webkit-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @-moz-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @-ms-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @-o-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @keyframes #{$animation-name} {
+    @content;
+  }
+}
+
 @font-face {
   font-family: orbitron;
   src: url("./../resources/fonts/Orbitron-VariableFont_wght.ttf");
@@ -106,6 +130,17 @@ a {
     min-width: 200px;
   }
 
+  .time-left-active {
+    @include prefix("animation-iteration-count", "infinite");
+    @include prefix("animation-name", "time-left-active");
+    @include prefix("animation-timing-function", "linear");
+    @include prefix("animation-duration", "1s");
+  }
+
+  .time-left-inactive {
+    color: red !important;
+  }
+
   #play-reset-controls {
     #start_stop,
     #reset {
@@ -127,5 +162,31 @@ a {
     * {
       padding: 0em 0.25em;
     }
+  }
+}
+
+@include keyframes("time-left-active") {
+  0% {
+    color: red;
+  }
+
+  25% {
+    color: red;
+  }
+  26% {
+    color: black;
+  }
+  50% {
+    color: black;
+  }
+  75% {
+    color: black;
+  }
+  76% {
+    color: red;
+  }
+
+  100% {
+    color: red;
   }
 }

@@ -3,18 +3,6 @@ import logo from "./logo.svg";
 
 const CLOCK_STATES = {
   DEFAULT: {
-    session_length: 0.15,
-    session_in_secs: 7,
-    break_length: 0.15,
-    break_in_secs: 7,
-    time_left: "25:00",
-    isStartTimer: false,
-    isStartBreak: false,
-  },
-};
-/*
-const CLOCK_STATES = {
-  DEFAULT: {
     session_length: 25,
     session_in_secs: 1500,
     break_length: 5,
@@ -24,7 +12,7 @@ const CLOCK_STATES = {
     isStartBreak: false,
   },
 };
-*/
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -64,13 +52,13 @@ class App extends React.Component {
   }
 
   shouldComponentUpdate(nextProp, nextState) {
-    if (this.state.session_in_secs === nextState.session_in_secs) {
-      console.log("update " + this.state.session_in_secs);
-    }
-
     return true;
   }
 
+  /*
+   * Starts and stops the timer countdown
+   *
+   * */
   start_stop() {
     if (!this.state.isStartTimer) {
       this.startTimer();
@@ -108,7 +96,7 @@ class App extends React.Component {
           this.setState((state) => {
             return {
               isStartBreak: !state.isStartBreak,
-              time_left: this.formatTime(this.state.session_in_secs),
+              time_left: this.formatTime(this.state.break_in_secs),
               session_in_secs: state.session_length * 60,
             };
           });
@@ -124,9 +112,6 @@ class App extends React.Component {
 
       // Countdown break
       else {
-        console.log("break start");
-        console.log(this.state.break_in_secs);
-
         if (this.state.break_in_secs <= 0) {
           this.audio.currentTime = 0;
           this.audio.play();
@@ -134,7 +119,7 @@ class App extends React.Component {
           this.setState((state) => {
             return {
               isStartBreak: !state.isStartBreak,
-              time_left: this.formatTime(this.state.break_in_secs),
+              time_left: this.formatTime(this.state.session_in_secs),
               break_in_secs: state.break_length * 60,
             };
           });
@@ -150,12 +135,14 @@ class App extends React.Component {
     }, 1000);
   }
 
+  /*
+   * Stops the countdown timer
+   *
+   */
   stopTimer() {
     if (this.countDownHandler != null) {
       clearInterval(this.countDownHandler);
     }
-
-    console.log("end timer");
   }
 
   /*
@@ -297,6 +284,8 @@ class App extends React.Component {
   }
 
   render() {
+    let isStartBreak = this.state.isStartBreak;
+
     return (
       <div class="container h-100">
         <div class="row h-100">
@@ -377,11 +366,53 @@ class App extends React.Component {
                 {/* Sesssion */}
                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 pt-4 d-flex flex-column justify-content-center align-items-center">
                   <div id="timer-container">
-                    <h3 id="timer-label" class="text-center">
+                    <h3
+                      id="timer-label"
+                      className={
+                        !isStartBreak &&
+                        this.state.session_in_secs > 30 &&
+                        this.state.session_in_secs < 60
+                          ? "text-center time-left-inactive"
+                          : !isStartBreak &&
+                            this.state.session_in_secs >= 0 &&
+                            this.state.session_in_secs <= 30
+                          ? "text-center time-left-active"
+                          : isStartBreak &&
+                            this.state.break_in_secs > 30 &&
+                            this.state.break_in_secs < 60
+                          ? "text-center time-left-inactive"
+                          : isStartBreak &&
+                            this.state.break_in_secs >= 0 &&
+                            this.state.break_in_secs <= 30
+                          ? "text-center time-left-active"
+                          : "text-center"
+                      }
+                    >
                       {!this.state.isStartBreak ? "SESSION" : "BREAK"}
                     </h3>
 
-                    <h1 id="time-left" class="text-center">
+                    <h1
+                      id="time-left"
+                      className={
+                        !isStartBreak &&
+                        this.state.session_in_secs > 30 &&
+                        this.state.session_in_secs < 60
+                          ? "text-center time-left-inactive"
+                          : !isStartBreak &&
+                            this.state.session_in_secs >= 0 &&
+                            this.state.session_in_secs <= 30
+                          ? "text-center time-left-active"
+                          : isStartBreak &&
+                            this.state.break_in_secs > 30 &&
+                            this.state.break_in_secs < 60
+                          ? "text-center time-left-inactive"
+                          : isStartBreak &&
+                            this.state.break_in_secs >= 0 &&
+                            this.state.break_in_secs <= 30
+                          ? "text-center time-left-active"
+                          : "text-center"
+                      }
+                    >
                       {this.state.time_left}
                     </h1>
 
